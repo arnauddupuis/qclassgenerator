@@ -1,6 +1,6 @@
 #!/usr/bin/perl
 
-## Copyright 911 Parent Helpers
+## Copyright Arnaud Dupuis <a [dot] dupuis [at] infinityperl [dot] org>
 
 use warnings;
 use strict;

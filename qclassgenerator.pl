@@ -134,7 +134,12 @@ foreach my $mn (sort(keys %{$members})){
 		}
 	}
 	$code_gen->{variables_declarations} .= "\t$members->{$mn} m_$mn;\n";
-	$code_gen->{getters_headers} .= "\n\t/*!\n\tGet <complete description here>.\n\t\\return <complete> as a $members->{$mn}\n\t*/\n\t$members->{$mn} $mn() ;\n\n";
+	if( defined($config->{"doc:get:$mn"}) && $config->{"doc:get:$mn"} ne "" ){
+		$code_gen->{getters_headers} .= "\n\t/*!\n\t".$config->{"doc:get:$mn"}."\n\t\\return m_$mn as a $members->{$mn}\n\t*/\n\t$members->{$mn} $mn() ;\n\n";
+	}
+	else{
+		$code_gen->{getters_headers} .= "\n\t/*!\n\tGet <complete description here>.\n\t\\return m_$mn as a $members->{$mn}\n\t*/\n\t$members->{$mn} $mn() ;\n\n";
+	}
 	if(defined($config->{fk_prefix}) && $config->{fk_prefix} && $members->{$mn} =~ /^$config->{fk_prefix}/){
 		$code_gen->{setters_code} .= "void $code_gen->{class_name}::set".ucfirst($mn)."(const $members->{$mn} & p_$mn) {\n\tm_$mn=p_$mn;\n\tsetForeignKey(\"$mn\",m_$mn);\n\temit(".$mn."Changed(m_$mn));\n}\n\n";
 		$code_gen->{getters_code} .= "$members->{$mn} $code_gen->{class_name}::$mn() {\n\treturn qobject_cast<$members->{$mn}*>(foreignKey(\"$mn\"));\n}\n\n";
@@ -143,7 +148,12 @@ foreach my $mn (sort(keys %{$members})){
 		$code_gen->{setters_code} .= "void $code_gen->{class_name}::set".ucfirst($mn)."(const $members->{$mn} & p_$mn) {\n\tm_$mn=p_$mn;\n\temit(".$mn."Changed(m_$mn));\n}\n\n";
 		$code_gen->{getters_code} .= "$members->{$mn} $code_gen->{class_name}::$mn() {\n\treturn m_$mn;\n}\n\n";
 	}
-	$code_gen->{setters_headers} .= "\n\t/*!\n\tSet <complete description here>.\n\t*/\n\tvoid set".ucfirst($mn)."(const $members->{$mn} & p_$mn) ;\n\n";
+	if( defined($config->{"doc:set:$mn"}) && $config->{"doc:set:$mn"} ne "" ){
+		$code_gen->{setters_headers} .= "\n\t/*!\n\t".$config->{"doc:set:$mn"}."\n\t*/\n\tvoid set".ucfirst($mn)."(const $members->{$mn} & p_$mn) ;\n\n";
+	}
+	else{
+		$code_gen->{setters_headers} .= "\n\t/*!\n\tSet <complete description here>.\n\t*/\n\tvoid set".ucfirst($mn)."(const $members->{$mn} & p_$mn) ;\n\n";
+	}
 	$code_gen->{signals_headers} .= "\tvoid ".$mn."Changed(const $members->{$mn} & p_$mn);\n";
 	$code_gen->{copy_operator} .= "\tthis->m_$mn = p_obj.m_$mn;\n";
 }
